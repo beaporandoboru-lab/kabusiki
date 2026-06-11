@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NV証券 | オンライン取引ポータル</title>
+  
+  <!-- Global JavaScript Error Tracker (Diagnostics) -->
+  <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+      // Find or create diagnostics container
+      let banner = document.getElementById('error-diagnostics-banner');
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'error-diagnostics-banner';
+        banner.style.position = 'fixed';
+        banner.style.top = '20px';
+        banner.style.left = '50%';
+        banner.style.transform = 'translateX(-50%)';
+        banner.style.zIndex = '10000';
+        banner.style.width = '90%';
+        banner.style.maxWidth = '600px';
+        banner.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)';
+        document.body.insertBefore(banner, document.body.firstChild);
+      }
+      
+      const file = source ? source.split('/').pop() : '不明';
+      banner.innerHTML = `
+        <div style="background: #ff4a5a; color: #ffffff; padding: 16px 24px; border-radius: 12px; font-family: sans-serif; font-size: 0.85rem; line-height: 1.5; border: 1px solid rgba(255,255,255,0.2); text-align: left;">
+          <strong style="font-size: 0.95rem; display: block; margin-bottom: 6px;">⚠️ JavaScriptプログラムの読み込みエラー:</strong>
+          <span style="font-family: monospace; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; display: block; margin-bottom: 8px; word-break: break-all;">${message}</span>
+          <span style="color: #ffd0d4; font-size: 0.75rem;">発生場所: ${file} (行 ${lineno}:${colno})</span>
+        </div>
+      `;
+      return false; // let browser log it as well
+    };
+  </script>
+
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  
+  <!-- UNIFIED APPLICATION CONTAINER -->
+  <div class="app-container" id="app-view">
+    
+    <!-- Global Header (Always visible) -->
+    <header class="app-header glass-card" id="app-header">
+      <!-- Renders dynamically by Header.js -->
+    </header>
+
+    <!-- AUTHENTICATION SCREEN (LOGIN & REGISTER) -->
+    <div class="auth-container" id="auth-view">
+      <div class="auth-card glass-card">
+        <div class="auth-logo-section">
+          <div class="logo-icon">NV</div>
+          <h1>NV証券 オンライン取引システム</h1>
+        </div>
+        
+        <!-- Login Form View -->
+        <div class="auth-sub-view" id="auth-login-subview">
+          <div class="panel-header">
+            <h2>顧客ポータル ログイン</h2>
+          </div>
+          <p class="auth-description">
+            NV証券の取引口座ID（例: NV-1001）と4桁の暗証番号（PIN）を入力してログインしてください。
+          </p>
+          <div class="panel-alert error hidden" id="login-alert"></div>
+          <form class="auth-form" id="login-form">
+            <div class="form-group">
+              <span class="form-label">口座ID (Account ID)</span>
+              <input type="text" class="trade-input" id="login-id" placeholder="NV-1001" required>
+            </div>
+            <div class="form-group">
+              <span class="form-label">暗証番号 (4桁の暗証番号)</span>
+              <input type="password" class="trade-input" id="login-password" placeholder="••••" pattern="\d{4}" maxlength="4" required>
+            </div>
+            <button type="submit" class="execute-btn buy" style="width: 100%; margin-top: 10px;">
+              ログイン
+            </button>
+          </form>
+          <div class="auth-switch-link">
+            口座をお持ちでないですか？ <a href="#" id="link-to-register">新規口座開設はこちら</a>
+          </div>
+        </div>
+
+        <!-- Register Form View -->
+        <div class="auth-sub-view hidden" id="auth-register-subview">
+          <div class="panel-header">
+            <h2>新規口座開設 (無料)</h2>
+          </div>
+          <p class="auth-description">
+            ご希望の口座IDとアカウント名、4桁の暗証番号を設定してください。初期残高として $50,000.00 がウォレットに付与されます。
+          </p>
+          <div class="panel-alert error hidden" id="register-alert"></div>
+          <form class="auth-form" id="register-form">
+            <div class="form-group">
+              <span class="form-label">ご希望の口座ID</span>
+              <input type="text" class="trade-input" id="reg-id" placeholder="例: NV-1002" required>
+            </div>
+            <div class="form-group">
+              <span class="form-label">お名前 / 口座名義</span>
+              <input type="text" class="trade-input" id="reg-name" placeholder="例: 鈴木 一郎" required>
+            </div>
+            <div class="form-group">
+              <span class="form-label">暗証番号 (4桁の数字)</span>
+              <input type="password" class="trade-input" id="reg-password" placeholder="例: 1234" pattern="\d{4}" maxlength="4" required>
+            </div>
+            <button type="submit" class="execute-btn buy" style="width: 100%; margin-top: 10px;">
+              口座を開設する
+            </button>
+          </form>
+          <div class="auth-switch-link">
+            すでに口座をお持ちですか？ <a href="#" id="link-to-login">ログイン画面に戻る</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRADING DASHBOARD VIEW -->
+    <div class="view-wrapper hidden" id="view-dashboard">
+      <main class="dashboard-grid">
+        <!-- Left Column: Markets & Stock List -->
+        <section class="column-left glass-card">
+          <div class="panel-header">
+            <h2>銘柄一覧</h2>
+            <span class="live-indicator"><span class="pulse"></span>LIVE</span>
+          </div>
+          <div class="stock-list-container" id="stock-list">
+            <!-- Rendered dynamically by StockList.js -->
+          </div>
+        </section>
+
+        <!-- Middle Column: Interactive Chart & Portfolio -->
+        <section class="column-center">
+          <!-- Stock Details & Chart Card -->
+          <div class="chart-card glass-card">
+            <div class="chart-header" id="chart-header">
+              <!-- Rendered dynamically -->
+            </div>
+            <div class="chart-body">
+              <canvas id="main-chart"></canvas>
+              <div id="chart-loading" class="chart-loading hidden">読み込み中...</div>
+            </div>
+            <div class="chart-footer">
+              <div class="time-filters">
+                <button class="filter-btn active" data-range="1D">1日</button>
+                <button class="filter-btn" data-range="1W">1週</button>
+                <button class="filter-btn" data-range="1M">1ヶ月</button>
+              </div>
+              <div class="market-status">
+                <span>取引所時間: <span id="market-time">--:--:--</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Portfolio Details & Transaction History -->
+          <div class="portfolio-card glass-card">
+            <div class="portfolio-tabs">
+              <button class="portfolio-tab-btn active" data-tab="holdings">保有資産</button>
+              <button class="portfolio-tab-btn" data-tab="history">取引履歴</button>
+            </div>
+            <div class="portfolio-body">
+              <div class="tab-content active" id="tab-holdings">
+                <!-- Rendered dynamically by Portfolio.js -->
+              </div>
+              <div class="tab-content" id="tab-history">
+                <!-- Rendered dynamically by Portfolio.js -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Column: Trade Actions Panel -->
+        <section class="column-right glass-card" id="trade-panel">
+          <!-- Rendered dynamically by TradePanel.js -->
+        </section>
+      </main>
+    </div>
+
+    <!-- ADMINISTRATIVE VIEW -->
+    <div class="view-wrapper hidden" id="view-admin">
+      <main class="admin-grid" id="admin-panel">
+        <!-- Rendered dynamically by AdminPanel.js -->
+      </main>
+    </div>
+  </div>
+
+  <!-- Main JavaScript Bundle -->
+  <script type="module" src="./src/main.js"></script>
+
+  <!-- (Diagnostic fallback removed: window.selectStock is only set after login, causing false-positive banners) -->
+</body>
+</html>

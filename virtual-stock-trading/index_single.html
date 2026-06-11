@@ -1,0 +1,3306 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NV証券 | オンライン取引ポータル</title>
+  
+  <!-- Global JavaScript Error Tracker (Diagnostics) -->
+  <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+      // Find or create diagnostics container
+      let banner = document.getElementById('error-diagnostics-banner');
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'error-diagnostics-banner';
+        banner.style.position = 'fixed';
+        banner.style.top = '20px';
+        banner.style.left = '50%';
+        banner.style.transform = 'translateX(-50%)';
+        banner.style.zIndex = '10000';
+        banner.style.width = '90%';
+        banner.style.maxWidth = '600px';
+        banner.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)';
+        document.body.insertBefore(banner, document.body.firstChild);
+      }
+      
+      const file = source ? source.split('/').pop() : '不明';
+      banner.innerHTML = `
+        <div style="background: #ff4a5a; color: #ffffff; padding: 16px 24px; border-radius: 12px; font-family: sans-serif; font-size: 0.85rem; line-height: 1.5; border: 1px solid rgba(255,255,255,0.2); text-align: left;">
+          <strong style="font-size: 0.95rem; display: block; margin-bottom: 6px;">⚠️ JavaScriptプログラムの読み込みエラー:</strong>
+          <span style="font-family: monospace; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; display: block; margin-bottom: 8px; word-break: break-all;">${message}</span>
+          <span style="color: #ffd0d4; font-size: 0.75rem;">発生場所: ${file} (行 ${lineno}:${colno})</span>
+        </div>
+      `;
+      return false; // let browser log it as well
+    };
+  </script>
+
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+<style>
+/* NV Securities Corporate Design System */
+:root {
+  --bg-dark: #07080c;
+  --bg-gradient: radial-gradient(circle at 50% 0%, #101422 0%, #07080c 100%);
+  --bg-card: rgba(13, 17, 28, 0.7);
+  --bg-card-hover: rgba(22, 29, 48, 0.85);
+  --bg-input: rgba(8, 10, 18, 0.8);
+  
+  /* NV Corporate Accent: Elegant Gold */
+  --primary: #d4af37;
+  --primary-hover: #c59f28;
+  --primary-glow: rgba(212, 175, 55, 0.3);
+  
+  --success: #00ff88;
+  --success-glow: rgba(0, 255, 136, 0.2);
+  --success-bg: rgba(0, 255, 136, 0.06);
+  
+  --danger: #ff4a5a;
+  --danger-glow: rgba(255, 74, 90, 0.2);
+  --danger-bg: rgba(255, 74, 90, 0.06);
+  
+  --border-color: rgba(255, 255, 255, 0.06);
+  --border-color-hover: rgba(255, 255, 255, 0.12);
+  --border-color-active: rgba(212, 175, 55, 0.5);
+  
+  --text-main: #f3f4f6;
+  --text-muted: #8e9bb2;
+  --text-dark: #0b0f19;
+  
+  --font-family: 'Outfit', sans-serif;
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  --transition-fast: all 0.2s ease-in-out;
+  --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-dark);
+  background-image: var(--bg-gradient);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Glassmorphism CSS Card */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow);
+  transition: var(--transition-normal);
+}
+
+.glass-card:hover {
+  border-color: var(--border-color-hover);
+}
+
+/* Application Container */
+.app-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* AUTHENTICATION VIEW */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 32px;
+}
+
+.auth-logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.auth-logo-section h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #ffffff, var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.auth-description {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.auth-switch-link {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.auth-switch-link a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition-fast);
+}
+
+.auth-switch-link a:hover {
+  text-decoration: underline;
+  color: #ffffff;
+}
+
+/* Header Component */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, var(--primary), #ffffff);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--bg-dark);
+  font-size: 1.15rem;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+.logo-section h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #ffffff, #d4d8e0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-section span {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.header-stats {
+  display: flex;
+  gap: 28px;
+}
+
+.stat-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.stat-value.up {
+  color: var(--success);
+  text-shadow: 0 0 10px var(--success-glow);
+}
+
+.stat-value.down {
+  color: var(--danger);
+  text-shadow: 0 0 10px var(--danger-glow);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* User Card widget in header */
+.header-user-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.header-user-icon {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: var(--transition-fast);
+  padding: 4px;
+}
+
+.logout-btn:hover {
+  color: #ff606f;
+  text-decoration: underline;
+}
+
+.nav-btn {
+  background: var(--primary);
+  color: var(--bg-dark);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.nav-btn:hover {
+  background: #ecd070;
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.nav-btn.secondary-nav {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+.nav-btn.secondary-nav:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Dashboard Grid Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr 340px;
+  gap: 20px;
+}
+
+/* Left Column: Stock List */
+.column-left {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  max-height: 800px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.panel-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--success);
+  background: var(--success-bg);
+  padding: 4px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+}
+
+.live-indicator .pulse {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--success);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.6; box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+  70% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 0 6px rgba(0, 255, 136, 0); }
+  100% { transform: scale(0.9); opacity: 0.6; box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+}
+
+.stock-list-container {
+  overflow-y: auto;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
+}
+
+/* Stock Ticker Item Card */
+.stock-ticker-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.stock-ticker-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(2px);
+}
+
+.stock-ticker-card.active {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+}
+
+.ticker-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 140px;
+}
+
+.ticker-symbol {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.ticker-name {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ticker-chart-mini {
+  width: 50px;
+  height: 24px;
+}
+
+.ticker-prices {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.ticker-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.15s ease;
+}
+
+.ticker-change {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.ticker-change.up {
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.ticker-change.down {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+/* Tick Flashing Animations */
+.flash-up {
+  animation: tick-up 0.6s ease;
+}
+
+.flash-down {
+  animation: tick-down 0.6s ease;
+}
+
+@keyframes tick-up {
+  0% { color: var(--success); text-shadow: 0 0 8px var(--success); }
+  100% { color: inherit; }
+}
+
+@keyframes tick-down {
+  0% { color: var(--danger); text-shadow: 0 0 8px var(--danger); }
+  100% { color: inherit; }
+}
+
+/* Center Column: Charts & Portfolio */
+.column-center {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chart-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.chart-title-area {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chart-symbol {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.chart-name {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.chart-stats-area {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.chart-price-today {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.current-price-huge {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.price-change-badge-huge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.price-change-badge-huge.up {
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.price-change-badge-huge.down {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.meta-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 80px);
+  gap: 8px 16px;
+  border-left: 1px solid var(--border-color);
+  padding-left: 20px;
+}
+
+.meta-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.meta-stat-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.meta-stat-val {
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-body {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+#main-chart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(7, 9, 14, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.chart-loading.hidden {
+  display: none;
+}
+
+.chart-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+}
+
+.time-filters {
+  display: flex;
+  gap: 6px;
+}
+
+.filter-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: var(--transition-fast);
+}
+
+.filter-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+
+.filter-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--bg-dark);
+  font-weight: 700;
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+.market-status {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Portfolio Card & Tabs */
+.portfolio-card {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  min-height: 250px;
+}
+
+.portfolio-tabs {
+  display: flex;
+  gap: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.portfolio-tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  padding: 8px 4px 12px 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: var(--transition-fast);
+}
+
+.portfolio-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.portfolio-tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.portfolio-body {
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Table Styles */
+.portfolio-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.portfolio-table th {
+  padding: 8px 12px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.portfolio-table td {
+  padding: 12px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.portfolio-table tr:last-child td {
+  border-bottom: none;
+}
+
+.portfolio-table tr:hover td {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.symbol-col {
+  font-weight: 700;
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.badge.buy {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.badge.sell {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge.frozen {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid rgba(255, 74, 90, 0.2);
+}
+
+.badge.active {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.text-green {
+  color: var(--success);
+}
+
+.text-red {
+  color: var(--danger);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  gap: 8px;
+}
+
+/* Right Column: Trade Panel */
+.column-right {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.trade-tabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.trade-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: var(--transition-fast);
+}
+
+.trade-tab-btn.buy.active {
+  background: var(--success);
+  color: var(--bg-dark);
+  box-shadow: 0 0 10px var(--success-glow);
+}
+
+.trade-tab-btn.sell.active {
+  background: var(--danger);
+  color: #ffffff;
+  box-shadow: 0 0 10px var(--danger-glow);
+}
+
+.trade-stock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.trade-stock-name {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.trade-stock-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.trade-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.form-sublabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.form-sublabel:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.trade-input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: var(--text-main);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  transition: var(--transition-fast);
+}
+
+.trade-input:focus {
+  border-color: var(--border-color-active);
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.input-suffix {
+  position: absolute;
+  right: 14px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* Number helpers */
+.number-helpers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.helper-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 6px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: var(--transition-fast);
+}
+
+.helper-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+
+.trade-summary-card {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.summary-label {
+  color: var(--text-muted);
+}
+
+.summary-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-row.total {
+  border-top: 1px solid var(--border-color);
+  padding-top: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.execute-btn {
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: var(--transition-normal);
+  color: var(--bg-dark);
+}
+
+.execute-btn.buy {
+  background: var(--success);
+  box-shadow: 0 4px 15px var(--success-glow);
+}
+
+.execute-btn.buy:hover {
+  background: #00ffaa;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--success-glow);
+}
+
+.execute-btn.sell {
+  background: var(--danger);
+  color: #ffffff;
+  box-shadow: 0 4px 15px var(--danger-glow);
+}
+
+.execute-btn.sell:hover {
+  background: #ff606f;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--danger-glow);
+}
+
+.execute-btn:disabled {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-muted) !important;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Alert Notification Panel */
+.panel-alert {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-fast);
+  margin-bottom: 12px;
+}
+
+.panel-alert.success {
+  background: var(--success-bg);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  color: var(--success);
+}
+
+.panel-alert.error {
+  background: var(--danger-bg);
+  border: 1px solid rgba(255, 74, 90, 0.2);
+  color: var(--danger);
+}
+
+/* ADMINISTRATIVE VIEW LAYOUTS */
+.admin-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.admin-section {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 400px;
+}
+
+.admin-table-container {
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.admin-input-small {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 4px 8px;
+  border-radius: 6px;
+  width: 90px;
+  font-family: var(--font-family);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.admin-input-small:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.admin-action-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.admin-action-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.admin-action-btn.danger-action {
+  border-color: rgba(255, 74, 90, 0.3);
+  color: var(--danger);
+}
+
+.admin-action-btn.danger-action:hover {
+  background: var(--danger-bg);
+}
+
+.admin-action-btn.success-action {
+  border-color: rgba(0, 255, 136, 0.3);
+  color: var(--success);
+}
+
+.admin-action-btn.success-action:hover {
+  background: var(--success-bg);
+}
+
+.admin-override-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.override-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.override-stock-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.override-symbol {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.override-name {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.override-input-group {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Responsive Rules */
+@media (max-width: 1150px) {
+  .dashboard-grid, .admin-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .column-left {
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 650px) {
+  .app-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .header-stats {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .meta-stats-grid {
+    border-left: none;
+    padding-left: 0;
+    margin-top: 8px;
+  }
+}
+
+</style>
+</head>
+<body>
+  
+  <!-- UNIFIED APPLICATION CONTAINER -->
+  <div class="app-container" id="app-view">
+    
+    <!-- Global Header (Always visible) -->
+    <header class="app-header glass-card" id="app-header">
+      <!-- Renders dynamically by Header.js -->
+    </header>
+
+    <!-- AUTHENTICATION SCREEN (LOGIN & REGISTER) -->
+    <div class="auth-container" id="auth-view">
+      <div class="auth-card glass-card">
+        <div class="auth-logo-section">
+          <div class="logo-icon">NV</div>
+          <h1>NV証券 オンライン取引システム</h1>
+        </div>
+        
+        <!-- Login Form View -->
+        <div class="auth-sub-view" id="auth-login-subview">
+          <div class="panel-header">
+            <h2>顧客ポータル ログイン</h2>
+          </div>
+          <p class="auth-description">
+            NV証券の取引口座ID（例: NV-1001）と4桁の暗証番号（PIN）を入力してログインしてください。
+          </p>
+          <div class="panel-alert error hidden" id="login-alert"></div>
+          <form class="auth-form" id="login-form">
+            <div class="form-group">
+              <span class="form-label">口座ID (Account ID)</span>
+              <input type="text" class="trade-input" id="login-id" placeholder="NV-1001" required>
+            </div>
+            <div class="form-group">
+              <span class="form-label">暗証番号 (4桁の暗証番号)</span>
+              <input type="password" class="trade-input" id="login-password" placeholder="••••" pattern="\d{4}" maxlength="4" required>
+            </div>
+            <button type="submit" class="execute-btn buy" style="width: 100%; margin-top: 10px;">
+              ログイン
+            </button>
+          </form>
+          <div class="auth-switch-link">
+            口座をお持ちでないですか？ <a href="#" id="link-to-register">新規口座開設はこちら</a>
+          </div>
+        </div>
+
+        <!-- Register Form View -->
+        <div class="auth-sub-view hidden" id="auth-register-subview">
+          <div class="panel-header">
+            <h2>新規口座開設 (無料)</h2>
+          </div>
+          <p class="auth-description">
+            ご希望の口座IDとアカウント名、4桁の暗証番号を設定してください。初期残高として $50,000.00 がウォレットに付与されます。
+          </p>
+          <div class="panel-alert error hidden" id="register-alert"></div>
+          <form class="auth-form" id="register-form">
+            <div class="form-group">
+              <span class="form-label">ご希望の口座ID</span>
+              <input type="text" class="trade-input" id="reg-id" placeholder="例: NV-1002" required>
+            </div>
+            <div class="form-group">
+              <span class="form-label">お名前 / 口座名義</span>
+              <input type="text" class="trade-input" id="reg-name" placeholder="例: 鈴木 一郎" required>
+            </div>
+            <div class="form-group">
+              <span class="form-label">暗証番号 (4桁の数字)</span>
+              <input type="password" class="trade-input" id="reg-password" placeholder="例: 1234" pattern="\d{4}" maxlength="4" required>
+            </div>
+            <button type="submit" class="execute-btn buy" style="width: 100%; margin-top: 10px;">
+              口座を開設する
+            </button>
+          </form>
+          <div class="auth-switch-link">
+            すでに口座をお持ちですか？ <a href="#" id="link-to-login">ログイン画面に戻る</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRADING DASHBOARD VIEW -->
+    <div class="view-wrapper hidden" id="view-dashboard">
+      <main class="dashboard-grid">
+        <!-- Left Column: Markets & Stock List -->
+        <section class="column-left glass-card">
+          <div class="panel-header">
+            <h2>銘柄一覧</h2>
+            <span class="live-indicator"><span class="pulse"></span>LIVE</span>
+          </div>
+          <div class="stock-list-container" id="stock-list">
+            <!-- Rendered dynamically by StockList.js -->
+          </div>
+        </section>
+
+        <!-- Middle Column: Interactive Chart & Portfolio -->
+        <section class="column-center">
+          <!-- Stock Details & Chart Card -->
+          <div class="chart-card glass-card">
+            <div class="chart-header" id="chart-header">
+              <!-- Rendered dynamically -->
+            </div>
+            <div class="chart-body">
+              <canvas id="main-chart"></canvas>
+              <div id="chart-loading" class="chart-loading hidden">読み込み中...</div>
+            </div>
+            <div class="chart-footer">
+              <div class="time-filters">
+                <button class="filter-btn active" data-range="1D">1日</button>
+                <button class="filter-btn" data-range="1W">1週</button>
+                <button class="filter-btn" data-range="1M">1ヶ月</button>
+              </div>
+              <div class="market-status">
+                <span>取引所時間: <span id="market-time">--:--:--</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Portfolio Details & Transaction History -->
+          <div class="portfolio-card glass-card">
+            <div class="portfolio-tabs">
+              <button class="portfolio-tab-btn active" data-tab="holdings">保有資産</button>
+              <button class="portfolio-tab-btn" data-tab="history">取引履歴</button>
+            </div>
+            <div class="portfolio-body">
+              <div class="tab-content active" id="tab-holdings">
+                <!-- Rendered dynamically by Portfolio.js -->
+              </div>
+              <div class="tab-content" id="tab-history">
+                <!-- Rendered dynamically by Portfolio.js -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Column: Trade Actions Panel -->
+        <section class="column-right glass-card" id="trade-panel">
+          <!-- Rendered dynamically by TradePanel.js -->
+        </section>
+      </main>
+    </div>
+
+    <!-- ADMINISTRATIVE VIEW -->
+    <div class="view-wrapper hidden" id="view-admin">
+      <main class="admin-grid" id="admin-panel">
+        <!-- Rendered dynamically by AdminPanel.js -->
+      </main>
+    </div>
+  </div>
+
+  <!-- Main JavaScript Bundle -->
+<script>
+
+// --- BUNDLED: mockData.js ---
+// Initial Stock Definitions parsed from the spreadsheet (prices mapped to USD)
+const initialStocks = [
+  {
+    symbol: 'HOR',
+    name: '蓬莱平均',
+    basePrice: 49.63,
+    prevPrice: 50.20,
+    fullName: 'Hourai Average Index'
+  },
+  {
+    symbol: 'NED',
+    name: 'ネーデル平均',
+    basePrice: 45.06,
+    prevPrice: 45.64,
+    fullName: 'Neder Average Index'
+  },
+  {
+    symbol: 'BAB',
+    name: 'バビロニア平均',
+    basePrice: 8.22,
+    prevPrice: 8.42,
+    fullName: 'Babylonia Index'
+  },
+  {
+    symbol: 'LUX',
+    name: 'LUX指数',
+    basePrice: 293.51,
+    prevPrice: 307.85,
+    fullName: 'LUX Composite Index'
+  },
+  {
+    symbol: 'KOS',
+    name: 'KOSPI',
+    basePrice: 683.69,
+    prevPrice: 716.41,
+    fullName: 'Korean Composite Stock Index'
+  },
+  {
+    symbol: 'HAN',
+    name: '阪急企業',
+    basePrice: 167.82,
+    prevPrice: 174.50,
+    fullName: 'Hankyu Enterprise Co.'
+  },
+  {
+    symbol: 'MCS',
+    name: 'MCSPI5',
+    basePrice: 74.67,
+    prevPrice: 75.46,
+    fullName: 'MCS Sector Index 5'
+  },
+  {
+    symbol: 'ACWI',
+    name: 'オルカン',
+    basePrice: 113.96,
+    prevPrice: 118.68,
+    fullName: 'eMAXIS Slim All-Country Equity'
+  }
+];
+
+/**
+ * Generates historical stock price data for the last N intervals (e.g. 30 days/hours)
+ * @param {number} currentPrice - Starting current price
+ * @param {number} prevPrice - Reference previous price to establish direction
+ * @param {number} pointsCount - Number of points to generate (defaults to 30)
+ * @returns {Array<{date: string, price: number}>}
+ */
+function generateHistory(currentPrice, prevPrice, pointsCount = 30) {
+  const history = [];
+  let price = prevPrice;
+  const time = new Date();
+  
+  // Calculate a reasonable daily volatility based on price magnitude
+  const volatility = 0.015; // 1.5% daily volatility
+  
+  // Generate points backwards in time, then reverse
+  for (let i = pointsCount - 1; i >= 0; i--) {
+    const dateStr = new Date(time.getTime() - i * 24 * 60 * 60 * 1000).toLocaleDateString('ja-JP', {
+      month: 'short',
+      day: 'numeric'
+    });
+    
+    if (i === pointsCount - 1) {
+      history.push({ date: dateStr, price: Number(currentPrice.toFixed(2)) });
+      continue;
+    }
+    
+    // Random Walk: P_t = P_t+1 * (1 - change)
+    // Add a slight upward drift over the long term
+    const drift = 0.001; 
+    const change = (Math.random() - 0.48) * 2 * volatility + drift;
+    price = price * (1 - change);
+    
+    // Floor price at $0.01
+    if (price <= 0) price = 0.01;
+    
+    history.push({
+      date: dateStr,
+      price: Number(price.toFixed(2))
+    });
+  }
+  
+  // Ensure the history ends precisely at currentPrice and starts around prevPrice
+  history[history.length - 1].price = Number(currentPrice.toFixed(2));
+  
+  return history;
+}
+
+/**
+ * Simulates a single real-time market price tick (random walk)
+ * @param {object} stock - The stock object to update
+ * @param {object} overrides - Active price overrides map from store { SYMBOL: price }
+ * @returns {object} - Updated stock fields: price, change, changePercent
+ */
+function simulateTick(stock, overrides = {}) {
+  // If admin has overridden the price, snap to it immediately
+  const isOverridden = overrides[stock.symbol] !== undefined;
+  const currentPrice = isOverridden ? overrides[stock.symbol] : (stock.price || stock.basePrice);
+  
+  let finalPrice;
+  let isUp;
+  
+  if (isOverridden) {
+    // If overridden, the price is locked/set by admin. Tick is flat or tiny walk.
+    finalPrice = overrides[stock.symbol];
+    isUp = finalPrice >= (stock.price || stock.basePrice);
+  } else {
+    // Volatility factor per tick (e.g. 3 seconds)
+    const tickVolatility = 0.002; // 0.2% max change per tick
+    
+    // Random price change percentage (-0.2% to +0.22% with positive drift)
+    const drift = 0.0001; // Tiny positive drift
+    const pctChange = (Math.random() - 0.49) * 2 * tickVolatility + drift;
+    
+    const newPrice = Number((currentPrice * (1 + pctChange)).toFixed(2));
+    
+    // Avoid dropping to zero
+    finalPrice = Math.max(0.01, newPrice);
+    isUp = finalPrice >= currentPrice;
+  }
+  
+  // Calculate relative change since yesterday's close (prevPrice)
+  const change = Number((finalPrice - stock.prevPrice).toFixed(2));
+  const changePercent = Number(((change / stock.prevPrice) * 100).toFixed(2));
+  
+  return {
+    price: finalPrice,
+    change: change,
+    changePercent: changePercent,
+    isUp: isUp
+  };
+}
+
+
+// --- BUNDLED: store.js ---
+const STORAGE_KEY = 'nv_sec_multiuser_state_v2';
+
+const DEFAULT_STATE = {
+  users: {
+    "NV-1001": {
+      id: "NV-1001",
+      name: "デモ顧客 A",
+      password: "1234",
+      cash: 50000.00,
+      holdings: {},
+      history: [],
+      isFrozen: false
+    }
+  },
+  currentUserId: null,
+  priceOverrides: {} // { SYMBOL: number }
+};
+
+class Store {
+  constructor() {
+    this.state = this.loadState();
+  }
+
+  loadState() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        const parsed = JSON.parse(data);
+        // Ensure default user exists if users list is wiped
+        if (!parsed.users || Object.keys(parsed.users).length === 0) {
+          parsed.users = JSON.parse(JSON.stringify(DEFAULT_STATE.users));
+        }
+        return parsed;
+      }
+    } catch (e) {
+      console.error('Failed to parse user state from localStorage', e);
+    }
+    return JSON.parse(JSON.stringify(DEFAULT_STATE));
+  }
+
+  saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
+    } catch (e) {
+      console.error('Failed to save user state to localStorage', e);
+    }
+  }
+
+  // Account Gateways
+  register(id, name, password) {
+    const cleanId = id.trim().toUpperCase();
+    if (!cleanId) throw new Error('口座IDを入力してください。');
+    if (this.state.users[cleanId]) throw new Error('この口座IDはすでに登録されています。');
+    if (!password || !/^\d{4}$/.test(password)) throw new Error('暗証番号は4桁の数字である必要があります。');
+    if (!name.trim()) throw new Error('お名前を入力してください。');
+
+    this.state.users[cleanId] = {
+      id: cleanId,
+      name: name.trim(),
+      password: password,
+      cash: 50000.00, // Starting balance
+      holdings: {},
+      history: [],
+      isFrozen: false
+    };
+
+    this.saveState();
+    return cleanId;
+  }
+
+  login(id, password) {
+    const cleanId = id.trim().toUpperCase();
+    const user = this.state.users[cleanId];
+    if (!user) {
+      throw new Error('指定された口座IDが見つかりません。');
+    }
+    if (user.password !== password) {
+      throw new Error('暗証番号が正しくありません。');
+    }
+
+    this.state.currentUserId = cleanId;
+    this.saveState();
+    return user;
+  }
+
+  logout() {
+    this.state.currentUserId = null;
+    this.saveState();
+  }
+
+  getCurrentUser() {
+    if (!this.state.currentUserId) return null;
+    return this.state.users[this.state.currentUserId] || null;
+  }
+
+  // Admin Controls
+  getAllUsers() {
+    return Object.values(this.state.users);
+  }
+
+  updateUserCash(userId, newCash) {
+    const user = this.state.users[userId];
+    if (!user) return;
+    user.cash = Number(Math.max(0, parseFloat(newCash) || 0).toFixed(2));
+    this.saveState();
+  }
+
+  toggleUserFreeze(userId) {
+    const user = this.state.users[userId];
+    if (!user) return;
+    user.isFrozen = !user.isFrozen;
+    this.saveState();
+  }
+
+  deleteUser(userId) {
+    if (userId === 'NV-1001') {
+      throw new Error('デフォルトのデモアカウントは削除できません。');
+    }
+    if (this.state.currentUserId === userId) {
+      this.state.currentUserId = null;
+    }
+    delete this.state.users[userId];
+    this.saveState();
+  }
+
+  setPriceOverride(symbol, newPrice) {
+    const val = parseFloat(newPrice);
+    if (isNaN(val) || val <= 0) {
+      delete this.state.priceOverrides[symbol];
+    } else {
+      this.state.priceOverrides[symbol] = Number(val.toFixed(2));
+    }
+    this.saveState();
+  }
+
+  getPriceOverrides() {
+    return this.state.priceOverrides || {};
+  }
+
+  resetAllData() {
+    this.state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    this.saveState();
+  }
+
+  // Client Wallet Getters (scoped to logged-in user)
+  getCash() {
+    const user = this.getCurrentUser();
+    return user ? user.cash : 0;
+  }
+
+  getHoldings() {
+    const user = this.getCurrentUser();
+    return user ? user.holdings : {};
+  }
+
+  getHistory() {
+    const user = this.getCurrentUser();
+    return user ? user.history : [];
+  }
+
+  buy(symbol, qty, price) {
+    const user = this.getCurrentUser();
+    if (!user) throw new Error('ログインされていません。');
+    if (user.isFrozen) {
+      throw new Error('口座が凍結されています。取引を執行できません。カスタマーサポートへご連絡ください。');
+    }
+    if (qty <= 0 || isNaN(qty)) {
+      throw new Error('数量は0より大きい値である必要があります。');
+    }
+
+    const cost = qty * price;
+    if (user.cash < cost) {
+      throw new Error('資金が不足しています。');
+    }
+
+    user.cash = Number((user.cash - cost).toFixed(2));
+
+    if (!user.holdings[symbol]) {
+      user.holdings[symbol] = { shares: 0, avgPrice: 0 };
+    }
+
+    const currentHoldings = user.holdings[symbol];
+    const totalShares = currentHoldings.shares + qty;
+    const totalCost = (currentHoldings.shares * currentHoldings.avgPrice) + cost;
+
+    currentHoldings.shares = totalShares;
+    currentHoldings.avgPrice = Number((totalCost / totalShares).toFixed(2));
+
+    user.history.unshift({
+      id: Math.random().toString(36).substring(2, 11),
+      timestamp: new Date().toISOString(),
+      type: 'BUY',
+      symbol,
+      qty,
+      price,
+      total: Number(cost.toFixed(2))
+    });
+
+    this.saveState();
+  }
+
+  sell(symbol, qty, price) {
+    const user = this.getCurrentUser();
+    if (!user) throw new Error('ログインされていません。');
+    if (user.isFrozen) {
+      throw new Error('口座が凍結されています。取引を執行できません。カスタマーサポートへご連絡ください。');
+    }
+
+    const holdings = user.holdings[symbol];
+    if (!holdings || holdings.shares < qty) {
+      throw new Error('保有株数が不足しています。');
+    }
+
+    if (qty <= 0 || isNaN(qty)) {
+      throw new Error('数量は0より大きい値である必要があります。');
+    }
+
+    const proceeds = qty * price;
+    user.cash = Number((user.cash + proceeds).toFixed(2));
+
+    holdings.shares = Number((holdings.shares - qty).toFixed(4));
+    if (holdings.shares <= 0.0001) {
+      delete user.holdings[symbol];
+    }
+
+    user.history.unshift({
+      id: Math.random().toString(36).substring(2, 11),
+      timestamp: new Date().toISOString(),
+      type: 'SELL',
+      symbol,
+      qty,
+      price,
+      total: Number(proceeds.toFixed(2))
+    });
+
+    this.saveState();
+  }
+
+  getPortfolioSummary(currentPrices) {
+    const user = this.getCurrentUser();
+    if (!user) {
+      return { cash: 0, holdingsValue: 0, totalValue: 0, totalGain: 0, totalGainPercent: 0 };
+    }
+
+    let holdingsValue = 0;
+    let totalCostBasis = 0;
+
+    Object.keys(user.holdings).forEach(symbol => {
+      const holding = user.holdings[symbol];
+      const curPrice = currentPrices[symbol] || holding.avgPrice;
+      
+      holdingsValue += holding.shares * curPrice;
+      totalCostBasis += holding.shares * holding.avgPrice;
+    });
+
+    const totalValue = Number((user.cash + holdingsValue).toFixed(2));
+    const totalGain = Number((holdingsValue - totalCostBasis).toFixed(2));
+    const totalGainPercent = totalCostBasis > 0 
+      ? Number(((holdingsValue - totalCostBasis) / totalCostBasis * 100).toFixed(2))
+      : 0;
+
+    return {
+      cash: user.cash,
+      holdingsValue: Number(holdingsValue.toFixed(2)),
+      totalValue,
+      totalGain,
+      totalGainPercent
+    };
+  }
+}
+
+const store = new Store();
+
+
+// --- BUNDLED: Header.js ---
+
+function formatUSD(value) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(value);
+}
+
+/**
+ * Render Header with active user details and view toggles
+ * @param {string} containerId - Element container ID
+ * @param {Object} currentPrices - Current price values map { SYMBOL: price }
+ * @param {string} activeView - Current active view: 'DASHBOARD' or 'ADMIN'
+ * @param {Function} onViewToggle - Callback to toggle between 'DASHBOARD' and 'ADMIN'
+ * @param {Function} onLogout - Callback when logout executes
+ */
+function renderHeader(containerId, currentPrices, activeView, onViewToggle, onLogout) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const user = store.getCurrentUser();
+  
+  let statsHTML = '';
+  let userCardHTML = '';
+  
+  if (user) {
+    const summary = store.getPortfolioSummary(currentPrices);
+    const isProfit = summary.totalGain >= 0;
+    const gainSign = isProfit ? '+' : '';
+    const gainClass = summary.totalGain > 0 ? 'up' : (summary.totalGain < 0 ? 'down' : '');
+    
+    statsHTML = `
+      <div class="stat-group">
+        <span class="stat-label">総資産評価額</span>
+        <span class="stat-value" id="header-total-value">${formatUSD(summary.totalValue)}</span>
+      </div>
+      <div class="stat-group">
+        <span class="stat-label">買付余力 (米ドル)</span>
+        <span class="stat-value" id="header-cash">${formatUSD(summary.cash)}</span>
+      </div>
+      <div class="stat-group">
+        <span class="stat-label">トータル評価損益</span>
+        <span class="stat-value ${gainClass}" id="header-pnl">
+          ${gainSign}${formatUSD(summary.totalGain)} (${gainSign}${summary.totalGainPercent}%)
+        </span>
+      </div>
+    `;
+
+    userCardHTML = `
+      <div class="header-user-card">
+        <span class="header-user-icon">👤</span>
+        <span>${user.name} (${user.id})</span>
+        <button class="logout-btn" id="header-logout-btn">ログアウト</button>
+      </div>
+    `;
+  } else {
+    // Guest layout before login
+    statsHTML = `
+      <div style="display: flex; align-items: center; color: var(--text-muted); font-size: 0.8rem; font-style: italic;">
+        ※ 取引情報を表示するにはログインしてください
+      </div>
+    `;
+    userCardHTML = `
+      <div class="header-user-card" style="opacity: 0.75;">
+        <span class="header-user-icon">👤</span>
+        <span>ゲストユーザー</span>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="logo-section">
+      <div class="logo-icon">NV</div>
+      <div>
+        <h1 style="font-weight: 800; font-size: 1.2rem; letter-spacing: 0.5px; line-height: 1.1;">NV証券</h1>
+        <span style="font-size: 0.58rem; color: var(--primary); font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">NV Securities Trading Portal</span>
+      </div>
+    </div>
+    
+    <div class="header-stats">
+      ${statsHTML}
+    </div>
+
+    <div class="header-actions">
+      ${userCardHTML}
+      <button class="nav-btn ${activeView === 'ADMIN' ? 'secondary-nav' : ''}" id="header-view-toggle-btn">
+        ${activeView === 'ADMIN' ? '取引画面へ' : '管理画面へ'}
+      </button>
+    </div>
+  `;
+
+  // Bind View Toggle - Guarded to prevent TypeErrors
+  const toggleBtn = document.getElementById('header-view-toggle-btn');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      if (onViewToggle) onViewToggle();
+    });
+  }
+
+  // Bind Logout (only if user is logged in)
+  const logoutBtn = document.getElementById('header-logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      store.logout();
+      if (onLogout) onLogout();
+    });
+  }
+}
+
+
+// --- BUNDLED: AdminPanel.js ---
+
+/**
+ * Render the full Administrative Panel
+ * @param {string} containerId - Element container ID
+ * @param {Array<object>} stocks - Current running list of stocks in main memory
+ * @param {Function} onAdminActionExecuted - Callback to refresh views after admin change
+ */
+function renderAdminPanel(containerId, stocks, onAdminActionExecuted) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const users = store.getAllUsers();
+  const currentPrices = {};
+  stocks.forEach(s => {
+    currentPrices[s.symbol] = s.price;
+  });
+
+  // Renders User Management List
+  let userRows = '';
+  users.forEach(user => {
+    // Calculate portfolio holdings value for this specific user
+    let holdingsValue = 0;
+    Object.keys(user.holdings).forEach(symbol => {
+      const holding = user.holdings[symbol];
+      const curPrice = currentPrices[symbol] || holding.avgPrice;
+      holdingsValue += holding.shares * curPrice;
+    });
+
+    const netAssets = user.cash + holdingsValue;
+    const isCurrentUser = store.getCurrentUser()?.id === user.id;
+
+    userRows += `
+      <tr>
+        <td class="symbol-col">${user.id} ${isCurrentUser ? '<span class="text-green">(あなた)</span>' : ''}</td>
+        <td>${user.name}</td>
+        <td>
+          <div class="override-input-group">
+            <input type="number" step="100" class="admin-input-small" id="cash-input-${user.id}" value="${user.cash.toFixed(2)}">
+            <button class="admin-action-btn" onclick="window.adminUpdateCash('${user.id}')">設定</button>
+          </div>
+        </td>
+        <td>${formatUSD(holdingsValue)}</td>
+        <td style="font-weight: 700;">${formatUSD(netAssets)}</td>
+        <td>
+          <span class="badge ${user.isFrozen ? 'frozen' : 'active'}">
+            ${user.isFrozen ? '凍結中' : '稼働中'}
+          </span>
+        </td>
+        <td>
+          <div class="override-input-group">
+            <button class="admin-action-btn ${user.isFrozen ? 'success-action' : 'danger-action'}" onclick="window.adminToggleFreeze('${user.id}')">
+              ${user.isFrozen ? '凍結解除' : '口座凍結'}
+            </button>
+            <button class="admin-action-btn danger-action" onclick="window.adminDeleteUser('${user.id}')" ${user.id === 'NV-1001' ? 'disabled' : ''}>
+              削除
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  // Renders stock overrides settings grid
+  let stockRows = '';
+  const overrides = store.getPriceOverrides();
+
+  stocks.forEach(stock => {
+    const isOverridden = overrides[stock.symbol] !== undefined;
+    const overrideVal = isOverridden ? overrides[stock.symbol] : '';
+
+    stockRows += `
+      <div class="override-row">
+        <div class="override-stock-info">
+          <span class="override-symbol">${stock.symbol}</span>
+          <span class="override-name">${stock.name}</span>
+        </div>
+        <div class="override-input-group">
+          <input type="number" step="0.01" class="admin-input-small" id="price-override-${stock.symbol}" placeholder="${stock.price.toFixed(2)}" value="${overrideVal}">
+          <button class="admin-action-btn" onclick="window.adminSetPriceOverride('${stock.symbol}')">適用</button>
+          <button class="admin-action-btn danger-action" onclick="window.adminClearPriceOverride('${stock.symbol}')" ${!isOverridden ? 'disabled' : ''}>解除</button>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = `
+    <!-- Left Panel: User Management -->
+    <div class="admin-section glass-card">
+      <div class="panel-header">
+        <h2>口座マネージャー</h2>
+      </div>
+      <div class="admin-table-container">
+        <table class="portfolio-table">
+          <thead>
+            <tr>
+              <th>口座ID</th>
+              <th>名義</th>
+              <th>買付余力 (米ドル)</th>
+              <th>株式評価額</th>
+              <th>総資産額</th>
+              <th>ステータス</th>
+              <th>管理メニュー</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${userRows}
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- System Reset Widget -->
+      <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+        <h3 style="font-size: 0.9rem; color: var(--danger); margin-bottom: 8px;">システムメンテナンス</h3>
+        <button class="admin-action-btn danger-action" onclick="window.adminResetAllSystem()" style="padding: 10px 16px;">
+          全口座および株価設定のデータベース初期化
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Panel: Manual Price Overrides -->
+    <div class="admin-section glass-card">
+      <div class="panel-header">
+        <h2>株価手動設定</h2>
+      </div>
+      <p class="auth-description" style="text-align: left;">
+        特定の銘柄の株価を強制的に設定します。空白にして「適用」または「解除」をクリックすると、スプレッドシートに基づく基準値に戻ります。
+      </p>
+      <div class="admin-override-grid">
+        ${stockRows}
+      </div>
+    </div>
+  `;
+
+  // Define global handlers on window for onClick actions to work in raw HTML strings
+  window.adminUpdateCash = (userId) => {
+    const input = document.getElementById(`cash-input-${userId}`);
+    if (input) {
+      store.updateUserCash(userId, input.value);
+      if (onAdminActionExecuted) onAdminActionExecuted();
+    }
+  };
+
+  window.adminToggleFreeze = (userId) => {
+    store.toggleUserFreeze(userId);
+    if (onAdminActionExecuted) onAdminActionExecuted();
+  };
+
+  window.adminDeleteUser = (userId) => {
+    if (confirm(`口座ID: ${userId} を削除しますか？ (この操作は取り消せません)`)) {
+      try {
+        store.deleteUser(userId);
+        if (onAdminActionExecuted) onAdminActionExecuted();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+  };
+
+  window.adminSetPriceOverride = (symbol) => {
+    const input = document.getElementById(`price-override-${symbol}`);
+    if (input) {
+      store.setPriceOverride(symbol, input.value);
+      if (onAdminActionExecuted) onAdminActionExecuted();
+    }
+  };
+
+  window.adminClearPriceOverride = (symbol) => {
+    store.setPriceOverride(symbol, null);
+    if (onAdminActionExecuted) onAdminActionExecuted();
+  };
+
+  window.adminResetAllSystem = () => {
+    if (confirm('警告: すべてのユーザー口座、ウォレット残高、株価設定が消去されます。よろしいですか？')) {
+      store.resetAllData();
+      if (onAdminActionExecuted) onAdminActionExecuted();
+    }
+  };
+}
+
+
+// --- BUNDLED: StockList.js ---
+
+// Cache historical data for sparklines so we don't regenerate on every tick
+const sparklineHistoryCache = {};
+
+function renderStockList(containerId, stocks, activeSymbol, onSelect) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  stocks.forEach(stock => {
+    const isSelected = stock.symbol === activeSymbol;
+    const card = document.createElement('div');
+    card.className = `stock-ticker-card ${isSelected ? 'active' : ''}`;
+    card.id = `ticker-${stock.symbol}`;
+    card.dataset.symbol = stock.symbol;
+
+    const chgClass = stock.changePercent >= 0 ? 'up' : 'down';
+    const chgSign = stock.changePercent >= 0 ? '+' : '';
+
+    card.innerHTML = `
+      <div class="ticker-info">
+        <span class="ticker-symbol">${stock.symbol}</span>
+        <span class="ticker-name">${stock.name}</span>
+      </div>
+      <canvas class="ticker-chart-mini" id="sparkline-${stock.symbol}" width="60" height="24"></canvas>
+      <div class="ticker-prices">
+        <span class="ticker-price" id="ticker-price-${stock.symbol}">${formatUSD(stock.price)}</span>
+        <span class="ticker-change ${chgClass}" id="ticker-change-${stock.symbol}">
+          ${chgSign}${stock.changePercent}%
+        </span>
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      // Toggle active states in DOM
+      document.querySelectorAll('.stock-ticker-card').forEach(el => el.classList.remove('active'));
+      card.classList.add('active');
+      onSelect(stock.symbol);
+    });
+
+    container.appendChild(card);
+
+    // Draw sparkline
+    drawSparkline(stock);
+  });
+}
+
+function updateStockListPrices(stocks) {
+  stocks.forEach(stock => {
+    const priceEl = document.getElementById(`ticker-price-${stock.symbol}`);
+    const changeEl = document.getElementById(`ticker-change-${stock.symbol}`);
+    if (!priceEl || !changeEl) return;
+
+    const currentText = priceEl.textContent;
+    const newText = formatUSD(stock.price);
+
+    if (currentText !== newText) {
+      // Determine direction of price change for animation flash
+      const isUp = stock.isUp;
+      priceEl.className = 'ticker-price'; // reset
+      void priceEl.offsetWidth; // trigger reflow
+      priceEl.classList.add(isUp ? 'flash-up' : 'flash-down');
+      
+      priceEl.textContent = newText;
+    }
+
+    const chgClass = stock.changePercent >= 0 ? 'up' : 'down';
+    const chgSign = stock.changePercent >= 0 ? '+' : '';
+    changeEl.className = `ticker-change ${chgClass}`;
+    changeEl.textContent = `${chgSign}${stock.changePercent}%`;
+  });
+}
+
+function drawSparkline(stock) {
+  const canvas = document.getElementById(`sparkline-${stock.symbol}`);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  // Retrieve or generate historical price points
+  let history = sparklineHistoryCache[stock.symbol];
+  if (!history) {
+    history = generateHistory(stock.price, stock.prevPrice, 15);
+    sparklineHistoryCache[stock.symbol] = history;
+  }
+
+  const prices = history.map(h => h.price);
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const range = max - min || 1;
+
+  const width = canvas.width;
+  const height = canvas.height;
+  const padding = 2;
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.beginPath();
+  
+  // Set trend color based on final relative trajectory
+  const firstPrice = prices[0];
+  const lastPrice = prices[prices.length - 1];
+  const isUpTrend = lastPrice >= firstPrice;
+  
+  ctx.strokeStyle = isUpTrend ? '#00ff88' : '#ff4a5a';
+  ctx.lineWidth = 1.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  history.forEach((h, index) => {
+    const x = (index / (history.length - 1)) * (width - padding * 2) + padding;
+    const y = height - ((h.price - min) / range) * (height - padding * 2) - padding;
+    
+    if (index === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  });
+
+  ctx.stroke();
+
+  // Draw gradient fill under the sparkline
+  ctx.lineTo((width - padding), height);
+  ctx.lineTo(padding, height);
+  ctx.closePath();
+  const gradient = ctx.createLinearGradient(0, 0, 0, height);
+  gradient.addColorStop(0, isUpTrend ? 'rgba(0, 255, 136, 0.15)' : 'rgba(255, 74, 90, 0.15)');
+  gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.fillStyle = gradient;
+  ctx.fill();
+}
+
+
+// --- BUNDLED: StockChart.js ---
+
+let chartHistory = [];
+let hoveredPoint = null;
+let canvasElement = null;
+let chartActiveStock = null;
+let currentRange = '1D';
+
+function renderChartHeader(containerId, stock) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  chartActiveStock = stock;
+  const chgClass = stock.changePercent >= 0 ? 'up' : 'down';
+  const chgSign = stock.changePercent >= 0 ? '+' : '';
+
+  // Generate high/low/open based on current price
+  const openPrice = stock.prevPrice;
+  const highPrice = Math.max(stock.price, openPrice) * 1.012;
+  const lowPrice = Math.min(stock.price, openPrice) * 0.988;
+
+  container.innerHTML = `
+    <div class="chart-title-area">
+      <span class="chart-symbol">${stock.symbol}</span>
+      <span class="chart-name">${stock.name} (${stock.fullName})</span>
+    </div>
+    <div class="chart-stats-area">
+      <div class="chart-price-today">
+        <span class="current-price-huge" id="chart-live-price">${formatUSD(stock.price)}</span>
+        <span class="price-change-badge-huge ${chgClass}" id="chart-live-change">
+          ${chgSign}${formatUSD(stock.change)} (${chgSign}${stock.changePercent}%)
+        </span>
+      </div>
+      <div class="meta-stats-grid">
+        <div class="meta-stat-item">
+          <span class="meta-stat-label">前日終値</span>
+          <span class="meta-stat-val">${formatUSD(openPrice)}</span>
+        </div>
+        <div class="meta-stat-item">
+          <span class="meta-stat-label">始値</span>
+          <span class="meta-stat-val">${formatUSD(openPrice * 1.002)}</span>
+        </div>
+        <div class="meta-stat-item">
+          <span class="meta-stat-label">高値</span>
+          <span class="meta-stat-val" id="chart-meta-high">${formatUSD(highPrice)}</span>
+        </div>
+        <div class="meta-stat-item">
+          <span class="meta-stat-label">安値</span>
+          <span class="meta-stat-val" id="chart-meta-low">${formatUSD(lowPrice)}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updateChartHeaderLivePrice(stock) {
+  if (!stock || chartActiveStock?.symbol !== stock.symbol) return;
+  
+  // Only update if not hovering, otherwise we show the hovered price
+  if (hoveredPoint !== null) return;
+
+  const priceEl = document.getElementById('chart-live-price');
+  const changeEl = document.getElementById('chart-live-change');
+  if (priceEl && changeEl) {
+    const chgClass = stock.changePercent >= 0 ? 'up' : 'down';
+    const chgSign = stock.changePercent >= 0 ? '+' : '';
+    
+    priceEl.textContent = formatUSD(stock.price);
+    changeEl.className = `price-change-badge-huge ${chgClass}`;
+    changeEl.textContent = `${chgSign}${formatUSD(stock.change)} (${chgSign}${stock.changePercent}%)`;
+  }
+}
+
+function initChart(canvasId, stock, range = '1D') {
+  canvasElement = document.getElementById(canvasId);
+  if (!canvasElement) return;
+
+  currentRange = range;
+  chartActiveStock = stock;
+
+  // Generate historical data based on selected range
+  let pointsCount = 30; // 1M default
+  if (range === '1D') pointsCount = 24; // 24 hours
+  else if (range === '1W') pointsCount = 7;  // 7 days
+  else if (range === '1M') pointsCount = 30; // 30 days
+
+  chartHistory = generateHistory(stock.price, stock.prevPrice, pointsCount);
+  hoveredPoint = null;
+
+  // Setup Canvas high DPI
+  resizeCanvas();
+  drawChart();
+
+  // Mouse interactivity
+  canvasElement.addEventListener('mousemove', handleMouseMove);
+  canvasElement.addEventListener('mouseleave', handleMouseLeave);
+  
+  // Watch window resize
+  window.removeEventListener('resize', resizeCanvas);
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    drawChart();
+  });
+}
+
+function resizeCanvas() {
+  if (!canvasElement) return;
+  const rect = canvasElement.getBoundingClientRect();
+  
+  // Set logical canvas dimensions to match CSS display width
+  const dpr = window.devicePixelRatio || 1;
+  canvasElement.width = rect.width * dpr;
+  canvasElement.height = rect.height * dpr;
+  
+  const ctx = canvasElement.getContext('2d');
+  ctx.scale(dpr, dpr);
+}
+
+function drawChart() {
+  if (!canvasElement || chartHistory.length === 0) return;
+  const ctx = canvasElement.getContext('2d');
+  if (!ctx) return;
+
+  const width = canvasElement.width / (window.devicePixelRatio || 1);
+  const height = canvasElement.height / (window.devicePixelRatio || 1);
+
+  // Clear Canvas
+  ctx.clearRect(0, 0, width, height);
+
+  const paddingLeft = 10;
+  const paddingRight = 50;
+  const paddingTop = 20;
+  const paddingBottom = 30;
+
+  const chartWidth = width - paddingLeft - paddingRight;
+  const chartHeight = height - paddingTop - paddingBottom;
+
+  const prices = chartHistory.map(h => h.price);
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const range = max - min || 1;
+
+  // Render Grid Lines (Horizontal & Vertical)
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+  ctx.lineWidth = 1;
+  
+  // 3 Horizontal lines
+  for (let i = 0; i <= 3; i++) {
+    const y = paddingTop + (chartHeight * i) / 3;
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y);
+    ctx.lineTo(width - paddingRight, y);
+    ctx.stroke();
+
+    // Price Labels on right side
+    const priceVal = max - (range * i) / 3;
+    ctx.fillStyle = '#8e9bb2';
+    ctx.font = '10px Outfit';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(formatUSD(priceVal), width - paddingRight + 8, y);
+  }
+
+  // Determine trend color (up or down)
+  const firstPrice = prices[0];
+  const lastPrice = prices[prices.length - 1];
+  const isUpTrend = lastPrice >= firstPrice;
+  const trendColor = isUpTrend ? '#00ff88' : '#ff4a5a';
+
+  // Plot Line Chart
+  ctx.beginPath();
+  chartHistory.forEach((pt, index) => {
+    const x = paddingLeft + (index / (chartHistory.length - 1)) * chartWidth;
+    const y = paddingTop + chartHeight - ((pt.price - min) / range) * chartHeight;
+
+    if (index === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  });
+
+  ctx.strokeStyle = trendColor;
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.shadowColor = trendColor;
+  ctx.shadowBlur = 10; // Glowing chart effect
+  ctx.stroke();
+  
+  // Reset shadow for subsequent draws
+  ctx.shadowBlur = 0;
+
+  // Area gradient fill
+  ctx.lineTo(paddingLeft + chartWidth, paddingTop + chartHeight);
+  ctx.lineTo(paddingLeft, paddingTop + chartHeight);
+  ctx.closePath();
+  const fillGradient = ctx.createLinearGradient(0, paddingTop, 0, paddingTop + chartHeight);
+  fillGradient.addColorStop(0, isUpTrend ? 'rgba(0, 255, 136, 0.15)' : 'rgba(255, 74, 90, 0.15)');
+  fillGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  ctx.fillStyle = fillGradient;
+  ctx.fill();
+
+  // Draw X Axis dates (at bottom)
+  ctx.fillStyle = '#8e9bb2';
+  ctx.font = '10px Outfit';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  
+  const labelSteps = 4;
+  for (let i = 0; i < labelSteps; i++) {
+    const index = Math.floor((i / (labelSteps - 1)) * (chartHistory.length - 1));
+    const pt = chartHistory[index];
+    if (pt) {
+      const x = paddingLeft + (index / (chartHistory.length - 1)) * chartWidth;
+      ctx.fillText(pt.date, x, paddingTop + chartHeight + 10);
+    }
+  }
+
+  // Draw Hover Interactivity Details
+  if (hoveredPoint !== null) {
+    const hoverIndex = hoveredPoint.index;
+    const pt = chartHistory[hoverIndex];
+    const x = paddingLeft + (hoverIndex / (chartHistory.length - 1)) * chartWidth;
+    const y = paddingTop + chartHeight - ((pt.price - min) / range) * chartHeight;
+
+    // Draw vertical dotted line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x, paddingTop);
+    ctx.lineTo(x, paddingTop + chartHeight);
+    ctx.stroke();
+    ctx.setLineDash([]); // clear dash
+
+    // Draw pulsing node at intersection
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, 2 * Math.PI);
+    ctx.fillStyle = trendColor;
+    ctx.shadowColor = trendColor;
+    ctx.shadowBlur = 15;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    
+    // Inner white dot
+    ctx.beginPath();
+    ctx.arc(x, y, 2.5, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+
+    // Floating Tooltip rendering
+    const tooltipText = `${pt.date}: ${formatUSD(pt.price)}`;
+    ctx.font = 'bold 11px Outfit';
+    const textWidth = ctx.measureText(tooltipText).width;
+    const tooltipW = textWidth + 16;
+    const tooltipH = 24;
+    
+    // Position tooltip to avoid edges
+    let tooltipX = x - tooltipW / 2;
+    if (tooltipX < paddingLeft) tooltipX = paddingLeft;
+    if (tooltipX + tooltipW > width - paddingRight) tooltipX = width - paddingRight - tooltipW;
+    
+    const tooltipY = Math.max(paddingTop - 10, y - 35);
+
+    // Draw tooltip box
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(tooltipX, tooltipY, tooltipW, tooltipH, 6);
+    ctx.fill();
+    ctx.stroke();
+
+    // Draw text inside tooltip
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(tooltipText, tooltipX + tooltipW / 2, tooltipY + tooltipH / 2);
+  }
+}
+
+function handleMouseMove(e) {
+  if (!canvasElement || chartHistory.length === 0) return;
+  const rect = canvasElement.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+
+  const paddingLeft = 10;
+  const paddingRight = 50;
+  const chartWidth = rect.width - paddingLeft - paddingRight;
+
+  // Calculate matching historical point index
+  const relativeX = mouseX - paddingLeft;
+  let fraction = relativeX / chartWidth;
+  if (fraction < 0) fraction = 0;
+  if (fraction > 1) fraction = 1;
+
+  const index = Math.round(fraction * (chartHistory.length - 1));
+  const hoveredData = chartHistory[index];
+
+  if (hoveredPoint === null || hoveredPoint.index !== index) {
+    hoveredPoint = { index, data: hoveredData };
+    drawChart();
+
+    // Update Header price to match hovered price
+    const priceEl = document.getElementById('chart-live-price');
+    const changeEl = document.getElementById('chart-live-change');
+    if (priceEl && changeEl && chartActiveStock) {
+      priceEl.textContent = formatUSD(hoveredData.price);
+      
+      const openPrice = chartActiveStock.prevPrice;
+      const change = Number((hoveredData.price - openPrice).toFixed(2));
+      const changePct = Number(((change / openPrice) * 100).toFixed(2));
+      const chgClass = change >= 0 ? 'up' : 'down';
+      const chgSign = change >= 0 ? '+' : '';
+      
+      changeEl.className = `price-change-badge-huge ${chgClass}`;
+      changeEl.textContent = `${chgSign}${formatUSD(change)} (${chgSign}${changePct}%)`;
+    }
+  }
+}
+
+function handleMouseLeave() {
+  hoveredPoint = null;
+  drawChart();
+
+  // Restore live price display
+  updateChartHeaderLivePrice(chartActiveStock);
+}
+
+
+// --- BUNDLED: TradePanel.js ---
+
+let activeTab = 'BUY'; // 'BUY' or 'SELL'
+let panelActiveStock = null;
+
+function renderTradePanel(containerId, stock, onTradeExecuted) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  panelActiveStock = stock;
+  const user = store.getCurrentUser();
+  const holdings = store.getHoldings();
+  const ownedShares = holdings[stock.symbol]?.shares || 0;
+  const cash = store.getCash();
+  const isFrozen = user?.isFrozen || false;
+
+  container.innerHTML = `
+    <div class="panel-header">
+      <h2>注文発注</h2>
+    </div>
+
+    <!-- BUY / SELL Tab Selector -->
+    <div class="trade-tabs">
+      <button class="trade-tab-btn buy ${activeTab === 'BUY' ? 'active' : ''}" id="btn-tab-buy" ${isFrozen ? 'disabled' : ''}>買付</button>
+      <button class="trade-tab-btn sell ${activeTab === 'SELL' ? 'active' : ''}" id="btn-tab-sell" ${isFrozen ? 'disabled' : ''}>売却</button>
+    </div>
+
+    <div class="trade-stock-header">
+      <div class="ticker-info">
+        <span class="ticker-symbol">${stock.symbol}</span>
+        <span class="trade-stock-name">${stock.name}</span>
+      </div>
+      <span class="trade-stock-price" id="trade-live-price">${formatUSD(stock.price)}</span>
+    </div>
+
+    <!-- Trade Info Alert Banner -->
+    <div class="panel-alert error ${isFrozen ? '' : 'hidden'}" id="trade-alert">
+      ${isFrozen ? '<span>⚠️</span> 口座が凍結されています。取引を執行できません。' : ''}
+    </div>
+
+    <form class="trade-form" id="trade-execution-form" onsubmit="return false;">
+      <div class="form-group">
+        <div class="form-label-row">
+          <span class="form-label">${activeTab === 'BUY' ? '買付可能残高' : '保有株数'}</span>
+          <span class="form-sublabel" id="trade-available-asset">
+            ${activeTab === 'BUY' ? formatUSD(cash) : `${ownedShares} 株`}
+          </span>
+        </div>
+      </div>
+
+      <!-- Quantity Input -->
+      <div class="form-group">
+        <div class="form-label-row">
+          <span class="form-label">注文数量</span>
+          <span class="form-sublabel" id="trade-max-calc-btn" style="${isFrozen ? 'pointer-events: none; opacity: 0.5;' : ''}">MAXを指定</span>
+        </div>
+        <div class="input-container">
+          <input type="number" step="any" min="0.0001" placeholder="0" class="trade-input" id="trade-qty-input" required ${isFrozen ? 'disabled' : ''}>
+          <span class="input-suffix">株</span>
+        </div>
+      </div>
+
+      <!-- Quick Number Helper Buttons -->
+      <div class="number-helpers">
+        <button type="button" class="helper-btn" data-value="1" ${isFrozen ? 'disabled' : ''}>1</button>
+        <button type="button" class="helper-btn" data-value="10" ${isFrozen ? 'disabled' : ''}>10</button>
+        <button type="button" class="helper-btn" data-value="100" ${isFrozen ? 'disabled' : ''}>100</button>
+        <button type="button" class="helper-btn" id="helper-half-btn" ${isFrozen ? 'disabled' : ''}>50%</button>
+      </div>
+
+      <!-- Order Summary Invoice Card -->
+      <div class="trade-summary-card">
+        <div class="summary-row">
+          <span class="summary-label">概算単価</span>
+          <span class="summary-value" id="summary-price">${formatUSD(stock.price)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">取引手数料</span>
+          <span class="summary-value">無料 ($0.00)</span>
+        </div>
+        <div class="summary-row total">
+          <span class="summary-label">概算注文総額</span>
+          <span class="summary-value" id="summary-total">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Execution Button -->
+      <button type="submit" class="execute-btn ${activeTab === 'BUY' ? 'buy' : 'sell'}" id="trade-submit-btn" disabled>
+        ${activeTab === 'BUY' ? '買い注文を実行' : '売り注文を実行'}
+      </button>
+    </form>
+  `;
+
+  if (isFrozen) return; // Skip binding events if frozen
+
+  // Bind Tab switching events
+  document.getElementById('btn-tab-buy').addEventListener('click', () => {
+    activeTab = 'BUY';
+    renderTradePanel(containerId, stock, onTradeExecuted);
+  });
+  
+  document.getElementById('btn-tab-sell').addEventListener('click', () => {
+    activeTab = 'SELL';
+    renderTradePanel(containerId, stock, onTradeExecuted);
+  });
+
+  // Bind input listeners
+  const qtyInput = document.getElementById('trade-qty-input');
+  const submitBtn = document.getElementById('trade-submit-btn');
+  const summaryTotal = document.getElementById('summary-total');
+
+  function updateCalculations() {
+    const qty = parseFloat(qtyInput.value) || 0;
+    const price = stock.price;
+    const total = qty * price;
+
+    summaryTotal.textContent = formatUSD(total);
+
+    // Validate order size
+    let isValid = qty > 0;
+    if (activeTab === 'BUY') {
+      isValid = isValid && total <= cash;
+    } else {
+      isValid = isValid && qty <= ownedShares;
+    }
+
+    submitBtn.disabled = !isValid;
+  }
+
+  qtyInput.addEventListener('input', updateCalculations);
+
+  // Bind Helper Buttons
+  document.querySelectorAll('.helper-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const val = parseInt(e.target.dataset.value);
+      if (val) {
+        qtyInput.value = val;
+        updateCalculations();
+      }
+    });
+  });
+
+  document.getElementById('helper-half-btn').addEventListener('click', () => {
+    if (activeTab === 'BUY') {
+      const halfCash = cash / 2;
+      qtyInput.value = Number((halfCash / stock.price).toFixed(4));
+    } else {
+      qtyInput.value = Number((ownedShares / 2).toFixed(4));
+    }
+    updateCalculations();
+  });
+
+  // Bind MAX button click
+  const maxBtn = document.getElementById('trade-max-calc-btn');
+  maxBtn.addEventListener('click', () => {
+    if (activeTab === 'BUY') {
+      qtyInput.value = Number((cash / stock.price).toFixed(4));
+    } else {
+      qtyInput.value = ownedShares;
+    }
+    updateCalculations();
+  });
+
+  // Bind Form Submit Action
+  document.getElementById('trade-execution-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const qty = parseFloat(qtyInput.value);
+    const price = stock.price;
+    const alertBanner = document.getElementById('trade-alert');
+
+    try {
+      if (activeTab === 'BUY') {
+        store.buy(stock.symbol, qty, price);
+        showAlert(alertBanner, 'success', `${stock.name} を ${qty} 株購入しました。`);
+      } else {
+        store.sell(stock.symbol, qty, price);
+        showAlert(alertBanner, 'success', `${stock.name} を ${qty} 株売却しました。`);
+      }
+
+      qtyInput.value = '';
+      updateCalculations();
+      
+      if (onTradeExecuted) onTradeExecuted();
+    } catch (err) {
+      showAlert(alertBanner, 'error', `エラー: ${err.message}`);
+    }
+  });
+}
+
+function updateTradePanelPrice(stock) {
+  if (!stock || panelActiveStock?.symbol !== stock.symbol) return;
+  const livePriceEl = document.getElementById('trade-live-price');
+  const summaryPriceEl = document.getElementById('summary-price');
+  if (livePriceEl && summaryPriceEl) {
+    livePriceEl.textContent = formatUSD(stock.price);
+    summaryPriceEl.textContent = formatUSD(stock.price);
+    
+    const qtyInput = document.getElementById('trade-qty-input');
+    if (qtyInput && qtyInput.value) {
+      const summaryTotal = document.getElementById('summary-total');
+      const submitBtn = document.getElementById('trade-submit-btn');
+      const cash = store.getCash();
+      const holdings = store.getHoldings();
+      const ownedShares = holdings[stock.symbol]?.shares || 0;
+
+      const qty = parseFloat(qtyInput.value) || 0;
+      const total = qty * stock.price;
+      summaryTotal.textContent = formatUSD(total);
+
+      let isValid = qty > 0;
+      if (activeTab === 'BUY') {
+        isValid = isValid && total <= cash;
+      } else {
+        isValid = isValid && qty <= ownedShares;
+      }
+      submitBtn.disabled = !isValid;
+    }
+  }
+}
+
+function showAlert(banner, type, message) {
+  if (!banner) return;
+  banner.className = `panel-alert ${type}`;
+  banner.innerHTML = `<span>${type === 'success' ? '✓' : '⚠️'}</span> ${message}`;
+  
+  // Fade out alert after 4 seconds
+  setTimeout(() => {
+    banner.classList.add('hidden');
+  }, 4000);
+}
+
+
+// --- BUNDLED: Portfolio.js ---
+
+/**
+ * Render user's current holdings
+ * @param {string} containerId - Element ID for Holdings panel
+ * @param {Object} currentPrices - Map of current stock prices { SYMBOL: price }
+ * @param {Function} onSelectStock - Callback when user clicks "取引" action link
+ */
+function renderHoldings(containerId, currentPrices, onSelectStock) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const holdings = store.getHoldings();
+  const holdingsKeys = Object.keys(holdings);
+
+  if (holdingsKeys.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div style="font-size: 1.5rem;">📁</div>
+        <span>現在、保有している銘柄はありません。</span>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">銘柄一覧から選択して購入してみましょう。</span>
+      </div>
+    `;
+    return;
+  }
+
+  let tableRows = '';
+  holdingsKeys.forEach(symbol => {
+    const item = holdings[symbol];
+    const curPrice = currentPrices[symbol] || item.avgPrice;
+    const marketValue = item.shares * curPrice;
+    const costBasis = item.shares * item.avgPrice;
+    const profit = marketValue - costBasis;
+    const profitPct = costBasis > 0 ? (profit / costBasis) * 100 : 0;
+    
+    const profitClass = profit > 0 ? 'text-green' : (profit < 0 ? 'text-red' : '');
+    const profitSign = profit > 0 ? '+' : '';
+
+    tableRows += `
+      <tr style="cursor: pointer;" class="holdings-row" data-symbol="${symbol}">
+        <td class="symbol-col">${symbol}</td>
+        <td>${item.shares.toFixed(4)} 株</td>
+        <td>${formatUSD(item.avgPrice)}</td>
+        <td>${formatUSD(curPrice)}</td>
+        <td style="font-weight: 600;">${formatUSD(marketValue)}</td>
+        <td class="${profitClass}" style="font-weight: 600;">
+          ${profitSign}${formatUSD(profit)} (${profitSign}${profitPct.toFixed(2)}%)
+        </td>
+        <td style="text-align: right;">
+          <button class="helper-btn" style="padding: 4px 8px; border-radius: 4px;" onclick="event.stopPropagation(); window.selectStock('${symbol}')">取引</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  container.innerHTML = `
+    <table class="portfolio-table">
+      <thead>
+        <tr>
+          <th>銘柄コード</th>
+          <th>保有数量</th>
+          <th>平均取得単価</th>
+          <th>現在値</th>
+          <th>評価額</th>
+          <th>評価損益</th>
+          <th style="text-align: right;">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tableRows}
+      </tbody>
+    </table>
+  `;
+
+  // Bind row click to select stock
+  document.querySelectorAll('.holdings-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const symbol = row.dataset.symbol;
+      if (onSelectStock) onSelectStock(symbol);
+    });
+  });
+}
+
+/**
+ * Render user's historical transaction log
+ * @param {string} containerId - Element ID for history panel
+ */
+function renderHistory(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const history = store.getHistory();
+
+  if (history.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div style="font-size: 1.5rem;">⏳</div>
+        <span>まだ取引履歴はありません。</span>
+      </div>
+    `;
+    return;
+  }
+
+  let tableRows = '';
+  history.forEach(tx => {
+    const dateStr = new Date(tx.timestamp).toLocaleString('ja-JP', {
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+
+    const badgeClass = tx.type === 'BUY' ? 'buy' : 'sell';
+    const typeLabel = tx.type === 'BUY' ? '買付' : '売却';
+
+    tableRows += `
+      <tr>
+        <td style="color: var(--text-muted); font-variant-numeric: tabular-nums;">${dateStr}</td>
+        <td style="font-weight: 700;">${tx.symbol}</td>
+        <td><span class="badge ${badgeClass}">${typeLabel}</span></td>
+        <td>${tx.qty} 株</td>
+        <td style="font-variant-numeric: tabular-nums;">${formatUSD(tx.price)}</td>
+        <td style="font-weight: 600; font-variant-numeric: tabular-nums;">${formatUSD(tx.total)}</td>
+      </tr>
+    `;
+  });
+
+  container.innerHTML = `
+    <table class="portfolio-table">
+      <thead>
+        <tr>
+          <th>日時</th>
+          <th>銘柄</th>
+          <th>取引区分</th>
+          <th>数量</th>
+          <th>約定単価</th>
+          <th>受渡金額</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tableRows}
+      </tbody>
+    </table>
+  `;
+}
+
+
+// --- BUNDLED: main.js ---
+
+// Application State
+let stocks = [];
+let activeSymbol = 'ACWI'; // Default to オルカン (eMAXIS Slim All-Country)
+let activeRange = '1D';
+let activeView = 'DASHBOARD'; // 'DASHBOARD' or 'ADMIN'
+
+// Quick price map for easy store calculations { SYMBOL: currentPrice }
+function getPricesMap() {
+  const map = {};
+  stocks.forEach(s => {
+    map[s.symbol] = s.price;
+  });
+  return map;
+}
+
+function getActiveStock() {
+  return stocks.find(s => s.symbol === activeSymbol);
+}
+
+// Bootstrap Initialization
+function init() {
+  // Initialize stocks structure
+  stocks = initialStocks.map(s => {
+    const price = s.basePrice;
+    const change = Number((price - s.prevPrice).toFixed(2));
+    const changePercent = Number(((change / s.prevPrice) * 100).toFixed(2));
+    return {
+      ...s,
+      price,
+      change,
+      changePercent,
+      isUp: true
+    };
+  });
+
+  // Bind auth view toggles ONCE to prevent listener pile-ups
+  const loginSubview = document.getElementById('auth-login-subview');
+  const regSubview = document.getElementById('auth-register-subview');
+  const linkToRegister = document.getElementById('link-to-register');
+  const linkToLogin = document.getElementById('link-to-login');
+  
+  if (linkToRegister && linkToLogin) {
+    linkToRegister.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginSubview.classList.add('hidden');
+      regSubview.classList.remove('hidden');
+      document.getElementById('login-alert').classList.add('hidden');
+    });
+
+    linkToLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      regSubview.classList.add('hidden');
+      loginSubview.classList.remove('hidden');
+      document.getElementById('register-alert').classList.add('hidden');
+    });
+  }
+
+  // Bind form submissions ONCE with preventDefault to avoid reloading the page
+  const loginForm = document.getElementById('login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault(); // Stop page reload
+      const idInput = document.getElementById('login-id').value;
+      const pinInput = document.getElementById('login-password').value;
+      const loginAlert = document.getElementById('login-alert');
+
+      try {
+        store.login(idInput, pinInput);
+        
+        // Clear fields
+        document.getElementById('login-id').value = '';
+        document.getElementById('login-password').value = '';
+        loginAlert.classList.add('hidden');
+
+        activeView = 'DASHBOARD'; // Reset view to Dashboard on login
+        setupRouting();
+      } catch (err) {
+        loginAlert.textContent = err.message;
+        loginAlert.classList.remove('hidden');
+      }
+    });
+  }
+
+  const regForm = document.getElementById('register-form');
+  if (regForm) {
+    regForm.addEventListener('submit', (e) => {
+      e.preventDefault(); // Stop page reload
+      const id = document.getElementById('reg-id').value;
+      const name = document.getElementById('reg-name').value;
+      const password = document.getElementById('reg-password').value;
+      const regAlert = document.getElementById('register-alert');
+
+      try {
+        const newId = store.register(id, name, password);
+        store.login(newId, password);
+
+        // Clear fields
+        document.getElementById('reg-id').value = '';
+        document.getElementById('reg-name').value = '';
+        document.getElementById('reg-password').value = '';
+        regAlert.classList.add('hidden');
+
+        activeView = 'DASHBOARD'; // Redirect to trading view on registration
+        setupRouting();
+      } catch (err) {
+        regAlert.textContent = err.message;
+        regAlert.classList.remove('hidden');
+      }
+    });
+  }
+
+  setupRouting();
+  startTickLoop();
+  startClockLoop();
+}
+
+// Check auth state and active view parameters to toggle visibility classes
+function setupRouting() {
+  const currentUser = store.getCurrentUser();
+  const authView = document.getElementById('auth-view');
+  const dashboardLayout = document.getElementById('view-dashboard');
+  const adminLayout = document.getElementById('view-admin');
+  const pricesMap = getPricesMap();
+
+  // 1. Refresh global header metrics (visible in both dashboard and admin, logged in or guest)
+  renderHeader('app-header', pricesMap, activeView, handleViewToggle, handleLogout);
+
+  if (activeView === 'ADMIN') {
+    // Admin mode is selected
+    authView.classList.add('hidden');
+    dashboardLayout.classList.add('hidden');
+    adminLayout.classList.remove('hidden');
+    
+    renderAdminPanel('admin-panel', stocks, handleAdminChange);
+  } else {
+    // Trading view is selected: check login gate status
+    adminLayout.classList.add('hidden');
+    
+    if (!currentUser) {
+      // User is not logged in: show credentials gateway
+      authView.classList.remove('hidden');
+      dashboardLayout.classList.add('hidden');
+    } else {
+      // User is logged in: show client trading dashboard
+      authView.classList.add('hidden');
+      dashboardLayout.classList.remove('hidden');
+      
+      setupUI();
+    }
+  }
+}
+
+function setupUI() {
+  const activeStock = getActiveStock();
+  const pricesMap = getPricesMap();
+
+  // Apply any active admin overrides to the local prices array right away
+  const overrides = store.getPriceOverrides();
+  stocks = stocks.map(s => {
+    if (overrides[s.symbol] !== undefined) {
+      const targetVal = overrides[s.symbol];
+      const change = Number((targetVal - s.prevPrice).toFixed(2));
+      const changePercent = Number(((change / s.prevPrice) * 100).toFixed(2));
+      return {
+        ...s,
+        price: targetVal,
+        change,
+        changePercent
+      };
+    }
+    return s;
+  });
+
+  // 1. Render Stock List Panel
+  renderStockList('stock-list', stocks, activeSymbol, handleStockSelect);
+
+  // 2. Render Center Chart
+  renderChartHeader('chart-header', activeStock);
+  initChart('main-chart', activeStock, activeRange);
+
+  // 3. Render Right Trade Panel
+  renderTradePanel('trade-panel', activeStock, handleTradeExecuted);
+
+  // 4. Render Bottom Portfolio Tables
+  renderHoldings('tab-holdings', pricesMap, handleStockSelect);
+  renderHistory('tab-history');
+
+  // Bind Portfolio Tab Switching
+  const tabButtons = document.querySelectorAll('.portfolio-tab-btn');
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const targetTab = btn.dataset.tab;
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      if (targetTab === 'holdings') {
+        document.getElementById('tab-holdings').classList.add('active');
+        renderHoldings('tab-holdings', getPricesMap(), handleStockSelect);
+      } else {
+        document.getElementById('tab-history').classList.add('active');
+        renderHistory('tab-history');
+      }
+    });
+  });
+
+  // Bind Chart Range Selector Buttons
+  const rangeButtons = document.querySelectorAll('.filter-btn');
+  rangeButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      rangeButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      activeRange = btn.dataset.range;
+      initChart('main-chart', getActiveStock(), activeRange);
+    });
+  });
+
+  // Expose global callback for Portfolio table actions
+  window.selectStock = handleStockSelect;
+}
+
+// User Actions Handlers
+function handleStockSelect(symbol) {
+  activeSymbol = symbol;
+  const activeStock = getActiveStock();
+  
+  // Highlight card in list
+  document.querySelectorAll('.stock-ticker-card').forEach(card => {
+    if (card.dataset.symbol === symbol) {
+      card.classList.add('active');
+    } else {
+      card.classList.remove('active');
+    }
+  });
+
+  // Update Detail Chart Header & Data
+  renderChartHeader('chart-header', activeStock);
+  initChart('main-chart', activeStock, activeRange);
+
+  // Update Order Entry Panel
+  renderTradePanel('trade-panel', activeStock, handleTradeExecuted);
+}
+
+function handleTradeExecuted() {
+  const pricesMap = getPricesMap();
+  const activeStock = getActiveStock();
+
+  // Redraw Header, Portfolio holdings and history logs
+  renderHeader('app-header', pricesMap, activeView, handleViewToggle, handleLogout);
+  renderHoldings('tab-holdings', pricesMap, handleStockSelect);
+  renderHistory('tab-history');
+
+  // Re-render Trade panel to reflect new balance and owned shares count
+  renderTradePanel('trade-panel', activeStock, handleTradeExecuted);
+}
+
+function handleViewToggle() {
+  activeView = activeView === 'DASHBOARD' ? 'ADMIN' : 'DASHBOARD';
+  setupRouting();
+}
+
+function handleLogout() {
+  activeView = 'DASHBOARD'; // Reset view back to Trading screen upon logging out
+  setupRouting();
+}
+
+function handleAdminChange() {
+  // Re-setup views to load updated database states or overridden stock values
+  setupRouting();
+}
+
+// Live Simulated Loops
+function startTickLoop() {
+  // Tick every 3 seconds
+  setInterval(() => {
+    const overrides = store.getPriceOverrides();
+
+    stocks = stocks.map(stock => {
+      // Pass overrides to tick calculator
+      const updates = simulateTick(stock, overrides);
+      return {
+        ...stock,
+        ...updates
+      };
+    });
+
+    const activeStock = getActiveStock();
+    const pricesMap = getPricesMap();
+
+    // If we are in Dashboard, update ticker quotes and live price indicators
+    if (activeView === 'DASHBOARD') {
+      // 1. Update stock tickers in left pane (flashing animations)
+      updateStockListPrices(stocks);
+
+      // 2. Update chart header live price (if not hovered)
+      updateChartHeaderLivePrice(activeStock);
+
+      // 3. Update order panel live price
+      updateTradePanelPrice(activeStock);
+
+      // 4. Update holdings table values (only if user is logged in)
+      if (store.getCurrentUser()) {
+        const holdingsTab = document.getElementById('tab-holdings');
+        if (holdingsTab && holdingsTab.classList.contains('active')) {
+          renderHoldings('tab-holdings', pricesMap, handleStockSelect);
+        }
+      }
+    }
+
+    // Update Header metrics silently (total assets change as prices fluctuate)
+    if (store.getCurrentUser()) {
+      const summary = store.getPortfolioSummary(pricesMap);
+      const totalValEl = document.getElementById('header-total-value');
+      const cashEl = document.getElementById('header-cash');
+      const pnlEl = document.getElementById('header-pnl');
+
+      if (totalValEl) totalValEl.textContent = formatUSD(summary.totalValue);
+      if (cashEl) cashEl.textContent = formatUSD(summary.cash);
+      if (pnlEl) {
+        const isProfit = summary.totalGain >= 0;
+        const gainSign = isProfit ? '+' : '';
+        pnlEl.className = `stat-value ${summary.totalGain > 0 ? 'up' : (summary.totalGain < 0 ? 'down' : '')}`;
+        pnlEl.textContent = `${gainSign}${formatUSD(summary.totalGain)} (${gainSign}${summary.totalGainPercent}%)`;
+      }
+    }
+  }, 3000);
+}
+
+function startClockLoop() {
+  setInterval(() => {
+    const clockEl = document.getElementById('market-time');
+    if (!clockEl) return;
+    const now = new Date();
+    clockEl.textContent = now.toLocaleTimeString('ja-JP', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  }, 1000);
+}
+
+// Run on window load
+window.addEventListener('DOMContentLoaded', init);
+
+
+</script>
+
+  <!-- (Diagnostic fallback removed: window.selectStock is only set after login, causing false-positive banners) -->
+</body>
+</html>
+
